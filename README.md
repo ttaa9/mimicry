@@ -10,7 +10,7 @@
  [![License: MIT](https://img.shields.io/badge/License-MIT-brightgreen.svg)](https://opensource.org/licenses/MIT)
 
 
-[About](https://kwotsin.github.io/post/introducing-mimicry/) | [Documentation](https://mimicry.readthedocs.io/en/latest/index.html) | [Tutorial](https://mimicry.readthedocs.io/en/latest/guides/tutorial.html) | [Gallery](https://github.com/kwotsin/mimicry/tree/master/docs/gallery/README.md)
+[About](https://kwotsin.github.io/post/introducing-mimicry/) | [Documentation](https://mimicry.readthedocs.io/en/latest/index.html) | [Tutorial](https://mimicry.readthedocs.io/en/latest/guides/tutorial.html) | [Gallery](https://github.com/kwotsin/mimicry/tree/master/docs/gallery/README.md) | [Paper](https://arxiv.org/abs/2005.02494)
 
 Mimicry is a lightweight PyTorch library aimed towards the reproducibility of GAN research.
 
@@ -64,6 +64,17 @@ trainer = mmc.training.Trainer(
     log_dir='./log/example',
     device=device)
 trainer.train()
+
+# Evaluate fid
+mmc.metrics.evaluate(
+    metric='fid',
+    log_dir='./log/example',
+    netG=netG,
+    dataset_name='cifar10',
+    num_real_samples=50000,
+    num_fake_samples=50000,
+    evaluate_step=100000,
+    device=device)
 ```
 Example outputs:
 ```
@@ -170,6 +181,7 @@ For a fair comparison, we train all models under the same training conditions fo
 #### Results
 | Resolution | Model | IS | FID | KID | Checkpoint | Code |
 |:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| 48 x 48 | WGAN-GP | 8.55 ± 0.02 | 43.01 ± 0.19 | 0.0440 ± 0.0003 | [netG.pth](https://drive.google.com/file/d/1-Fw_xzl_D7P05wL7HmSPGtPPiH3zTeG7/view?usp=sharing) | [wgan_gp_48.py](torch_mimicry/nets/wgan_gp/wgan_gp_48.py) |
 | 48 x 48 | SNGAN | 8.04 ± 0.07 | 39.56 ± 0.10 | 0.0369 ± 0.0002 | [netG.pth](https://drive.google.com/open?id=1tVRXDHgUTpBwfGh0RJvdjw2EUOGu-m-A) | [sngan_48.py](torch_mimicry/nets/sngan/sngan_48.py) |
 | 48 x 48 | SSGAN | 8.25 ± 0.06 | 37.06 ± 0.19 | 0.0332 ± 0.0004| [netG.pth](https://drive.google.com/open?id=1TBeAhxvxJr3ykKwu4Wgw715D2fAslM-9) | [ssgan_48.py](torch_mimicry/nets/ssgan/ssgan_48.py) |
 | 48 x 48 | InfoMax-GAN | 8.54 ± 0.12 | 35.52 ± 0.10 | 0.0326 ± 0.0002 | [netG.pth](https://drive.google.com/open?id=1QHwyvaCqAKyXbkYYzHGNEsDWpBPn05oS) | [infomax_gan_48.py](torch_mimicry/nets/infomax_gan/infomax_gan_48.py) |
@@ -201,6 +213,7 @@ For a fair comparison, we train all models under the same training conditions fo
 #### Results
 | Resolution | Model | IS | FID | KID | Checkpoint | Code |
 |:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| 32 x 32 | WGAN-GP | 7.33 ± 0.02 | 22.29 ± 0.06 | 0.0204± 0.0004 | [netG.pth](https://drive.google.com/file/d/1KL9uDpSZ1Fwzt-4Mke1o88w8ftX01OxR/view?usp=sharing) | [wgan_gp_32.py](torch_mimicry/nets/wgan_gp/wgan_gp_32.py) |
 | 32 x 32 | SNGAN | 7.97 ± 0.06 | 16.77 ± 0.04 | 0.0125 ± 0.0001 | [netG.pth](https://drive.google.com/open?id=16TxezS7VBTiuPdQdjDUM0-_rHXqyPrvr) | [sngan_32.py](torch_mimicry/nets/sngan/sngan_32.py) |
 | 32 x 32 | cGAN-PD | 8.25 ± 0.13 | 10.84 ± 0.03 | 0.0070 ± 0.0001 | [netG.pth](https://drive.google.com/open?id=12nGJZjJyi-RJQFj98MlrSqhA_uST2_1n) | [cgan_pd_32.py](torch_mimicry/nets/cgan_pd/cgan_pd_32.py) |
 | 32 x 32 | SSGAN | 8.17 ± 0.06 | 14.65 ± 0.04 |  0.0101 ± 0.0002 | [netG.pth](https://drive.google.com/open?id=1sceT1tUPw2wRVqLcpg1EkWpz8Qa5j_fE) | [ssgan_32.py](torch_mimicry/nets/ssgan/ssgan_32.py) |
@@ -242,6 +255,17 @@ As FID produces highly biased estimates (where using larger samples lead to a lo
 
 
 *<sup>†</sup> Best FID was reported at 53K steps, but we find our score can improve till 100K steps to achieve 23.13 ± 0.13.*
+
+## Citation
+If you have found this work useful, please consider citing [our work](https://arxiv.org/abs/2005.02494):
+```
+@article{lee2020mimicry,
+    title={Mimicry: Towards the Reproducibility of GAN Research},
+    author={Kwot Sin Lee and Christopher Town},
+    booktitle={CVPR Workshop on AI for Content Creation},
+    year={2020},
+}
+```
 
 ## References
 [[1] Spectral Normalization for Generative Adversarial Networks](https://arxiv.org/abs/1802.05957)

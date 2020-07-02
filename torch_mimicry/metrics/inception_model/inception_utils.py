@@ -54,7 +54,9 @@ def _get_inception_layer(sess):
 
     """
     # Get the output node
-    layer_name = 'inception_model/pool_3:0'
+    # layer_name = 'inception_model/pool_3:0' # TODO: Remove when safe. TF2 syntax changes again.
+    layer_name = 'pool_3:0'
+
     pool3 = sess.graph.get_tensor_by_name(layer_name)
 
     # Reshape to be batch size agnostic
@@ -62,8 +64,12 @@ def _get_inception_layer(sess):
     for op_idx, op in enumerate(ops):
         for o in op.outputs:
             shape = o.get_shape()
-            if shape._dims != []:
-                shape = [s.value for s in shape]
+            if len(shape._dims) > 0:
+                try:
+                    shape = [s.value for s in shape]
+                except AttributeError:  # TF 2 uses None shape directly. No conversion needed.
+                    shape = shape
+
                 new_shape = []
                 for j, s in enumerate(shape):
                     if s == 1 and j == 0:
@@ -106,8 +112,9 @@ def get_activations(images, sess, batch_size=50, verbose=True):
         start = i * batch_size
         end = start + batch_size
         batch = images[start:end]
-        pred = sess.run(inception_layer,
-                        {'inception_model/ExpandDims:0': batch})
+        pred = sess.run(inception_layer, {'ExpandDims:0': batch})
+        # pred = sess.run(inception_layer,
+        #                 {'inception_model/ExpandDims:0': batch}) # TODO: Remove when safe. TF2 syntax changes again.
         pred_arr[start:end] = pred.reshape(batch_size, -1)
 
         if verbose:
@@ -134,7 +141,7 @@ def create_inception_graph(inception_path):
     model_file = _check_or_download_inception(inception_path)
 
     # Creates graph from saved graph_def.pb.
-    with tf.gfile.GFile(model_file, 'rb') as f:
-        graph_def = tf.GraphDef()
+    with tf.io.gfile.GFile(model_file, 'rb') as f:
+        graph_def = tf.compat.v1.GraphDef()
         graph_def.ParseFromString(f.read())
         _ = tf.import_graph_def(graph_def, name='inception_model')

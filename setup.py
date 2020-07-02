@@ -8,7 +8,7 @@ install_requires = [
     'scipy',
     'requests',
     'torch',
-    'tensorflow<2.0',
+    'tensorflow',
     'torchvision',
     'six',
     'matplotlib',
@@ -21,6 +21,7 @@ install_requires = [
     'pandas',
     'psutil',
     'yapf',
+    'lmdb',
 ]
 
 setup_requires = ['pytest-runner']
